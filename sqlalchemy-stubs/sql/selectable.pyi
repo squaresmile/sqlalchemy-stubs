@@ -1,7 +1,7 @@
 from typing import Any, Optional, Union, TypeVar, List, Iterable, Sequence, Mapping, Set, Tuple, Type
 from .elements import (
     ClauseElement as ClauseElement, Grouping as Grouping, UnaryExpression as UnaryExpression, ColumnElement, ColumnClause,
-    TextClause, Label, BindParameter
+    TextClause, Label, BindParameter, TableValuedColumn
 )
 from .base import Immutable as Immutable, Executable as Executable, Generative as Generative, ImmutableColumnCollection, ColumnSet
 from .annotation import Annotated as Annotated
@@ -55,6 +55,7 @@ class FromClause(Selectable):
     def correspond_on_equivalents(self, column: ColumnElement[Any],
                                   equivalents: Mapping[Any, Any]) -> Optional[ColumnElement[Any]]: ...
     def corresponding_column(self, column: ColumnElement[Any], require_embedded: bool = ...) -> ColumnElement[Any]: ...
+    def table_valued(self) -> TableValuedColumn: ...
     @property
     def description(self) -> str: ...
     @property
@@ -246,16 +247,7 @@ _SE = TypeVar('_SE', bound=Select)
 
 class Select(HasPrefixes, HasSuffixes, GenerativeSelect):
     __visit_name__: str = ...
-    def __init__(self, columns: Optional[Iterable[Union[ColumnElement[Any], FromClause, int]]] = ...,
-                 whereclause: Optional[Union[str, bool, Visitable]] = ...,
-                 from_obj: Optional[Union[str, Selectable, Iterable[Union[str, Selectable]]]] = ...,
-                 group_by: Optional[Union[int, str, Visitable, Iterable[Union[int, str, Visitable]]]] = ...,
-                 having: Optional[Union[str, bool, Visitable]] = ...,
-                 order_by: Optional[Union[int, str, Visitable, Iterable[Union[int, str, Visitable]]]] = ...,
-                 distinct: bool = ..., correlate: bool = ..., limit: Optional[int] = ..., offset: Optional[int] = ...,
-                 use_labels: bool = ..., autocommit: bool = ..., bind: Union[Engine, Connection] = ...,
-                 prefixes: Optional[Any] = ..., suffixes: Optional[Any] = ...,
-                 **kwargs: Any) -> None: ...
+    def __init__(self, *columns: Union[ColumnElement[Any], FromClause, int]) -> None: ...
     @property
     def froms(self) -> List[FromClause]: ...
     def with_statement_hint(self: _SE, text: str, dialect_name: str = ...) -> _SE: ...
